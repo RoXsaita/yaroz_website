@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Yaroz Sweets - Placeholder Image Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            color: #db2777;
+            text-align: center;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .category {
+            margin-bottom: 40px;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            padding: 20px;
+            background-color: white;
+        }
+        h2 {
+            color: #9d174d;
+            margin-top: 0;
+            border-bottom: 2px solid #f9a8d4;
+            padding-bottom: 10px;
+        }
+        .images {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        .image-container {
+            border: 1px solid #e5e5e5;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .image-container canvas {
+            width: 100%;
+            display: block;
+        }
+        .image-info {
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+        button {
+            background-color: #db2777;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        button:hover {
+            background-color: #be185d;
+        }
+        .instructions {
+            background-color: #fdf2f8;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #db2777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Yaroz Sweets - Placeholder Image Generator</h1>
+        
+        <div class="instructions">
+            <h3>Instructions:</h3>
+            <ol>
+                <li>Click the "Generate Images" button below to create placeholder images</li>
+                <li>Download each image using the "Download" button</li>
+                <li>Place the downloaded images in their respective folders in your project:</li>
+                <ul>
+                    <li><code>/public/images/cakes/</code></li>
+                    <li><code>/public/images/sweets/</code></li>
+                    <li><code>/public/images/catering/</code></li>
+                    <li><code>/public/images/other/</code></li>
+                </ul>
+            </ol>
+        </div>
+        
+        <button id="generateAll" style="padding: 10px 20px; font-size: 16px; margin-bottom: 20px;">Generate All Images</button>
+        
+        <div class="category">
+            <h2>Cakes</h2>
+            <div class="images">
+                <div class="image-container">
+                    <canvas id="cake1" width="600" height="400"></canvas>
+                    <div class="image-info">
+                        <div>cake_1.jpg (600x400)</div>
+                        <button onclick="downloadImage('cake1', 'cake_1.jpg')">Download</button>
+                    </div>
+                </div>
+                <div class="image-container">
+                    <canvas id="cake2" width="600" height="400"></canvas>
+                    <div class="image-info">
+                        <div>cake_2.jpg (600x400)</div>
+                        <button onclick="downloadImage('cake2', 'cake_2.jpg')">Download</button>
+                    </div>
+                </div>
+                <div class="image-container">
+                    <canvas id="cake3" width="600" height="400"></canvas>
+                    <div class="image-info">
+                        <div>cake_3.jpg (600x400)</div>
+                        <button onclick="downloadImage('cake3', 'cake_3.jpg')">Download</button>
+                    </div>
+                </div>
+                <div class="image-container">
+                    <canvas id="cake4" width="600" height="400"></canvas>
+                    <div class="image-info">
+                        <div>cake_4.jpg (600x400)</div>
+                        <button onclick="downloadImage('cake4', 'cake_4.jpg')">Download</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="category">
+            <h2>Sweets</h2>
+            <div class="images">
+                <div class="image-container">
+                    <canvas id="sweet1" width="600" height="400"></canvas>
+                    <div class="image-info">
+                        <div>sweet_1.jpg (600x400)</div>
+                        <button onclick="downloadImage('sweet1', 'sweet_1.jpg')">Download</button>
+                    </div>
+                </div>
+                <div class="image-container">
+                    <canvas id="sweet2" width="600" height="400"></canvas>
+                    <div class="image-info">
+                        <div>sweet_2.jpg (600x400)</div>
+                        <button onclick="downloadImage('sweet2', 'sweet_2.jpg')">Download</button>
+                    </div>
+                </div>
+                <div class="image-container">
+                    <canvas id="sweet3" width="600" height="400"></canvas>
+                    <div class="image-info">
+                        <div>sweet_3.jpg (600x400)</div>
+                        <button onclick="downloadImage('sweet3', 'sweet_3.jpg')">Download</button>
+                    </div>
+                </div>
+                <div class="image-container">
+                    <canvas id="sweet4" width="600" height="400"></canvas>
+                    <div class="image-info">
+                        <div>sweet_4.jpg (600x400)</div>
+                        <button onclick="downloadImage('sweet4', 'sweet_4.jpg')">Download</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="category">
+            <h2>Catering</h2>
+            <div class="images">
+                <div class="image-container">
+                    <canvas id="catering1" width="600" height="400"></canvas>
+                    <div class="image-info">
+                        <div>catering_1.jpg (600x400)</div>
+                        <button onclick="downloadImage('catering1', 'catering_1.jpg')">Download</button>
+                    </div>
+                </div>
+                <div class="image-container">
+                    <canvas id="catering2" width="600" height="400"></canvas>
+                    <div class="image-info">
+                        <div>catering_2.jpg (600x400)</div>
+                        <button onclick="downloadImage('catering2', 'catering_2.jpg')">Download</button>
+                    </div>
+                </div>
+                <div class="image-container">
+                    <canvas id="catering3" width="600" height="400"></canvas>
+                    <div class="image-info">
+                        <div>catering_3.jpg (600x400)</div>
+                        <button onclick="downloadImage('catering3', 'catering_3.jpg')">Download</button>
+                    </div>
+                </div>
+                <div class="image-container">
+                    <canvas id="catering4" width="600" height="400"></canvas>
+                    <div class="image-info">
+                        <div>catering_4.jpg (600x400)</div>
+                        <button onclick="downloadImage('catering4', 'catering_4.jpg')">Download</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="category">
+            <h2>Other</h2>
+            <div class="images">
+                <div class="image-container">
+                    <canvas id="kitchen" width="600" height="600"></canvas>
+                    <div class="image-info">
+                        <div>kitchen.jpg (600x600)</div>
+                        <button onclick="downloadImage('kitchen', 'kitchen.jpg')">Download</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Colors for different categories
+        const colors = {
+            cake: ['#ff9999', '#ff6666', '#ff3333'],
+            sweet: ['#99ccff', '#6699ff', '#3366ff'],
+            catering: ['#99ff99', '#66cc66', '#339933'],
+            other: ['#cc99ff', '#9966cc', '#663399']
+        };
+        
+        // Function to generate a gradient background with text
+        function generatePlaceholder(canvasId, text, colorScheme) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Create gradient background
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, colorScheme[0]);
+            gradient.addColorStop(0.5, colorScheme[1]);
+            gradient.addColorStop(1, colorScheme[2]);
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Add decorative elements
+            const size = Math.min(canvas.width, canvas.height);
+            
+            // Add circles
+            for (let i = 0; i < 8; i++) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const radius = Math.random() * size * 0.1 + size * 0.02;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                ctx.fill();
+            }
+            
+            // Add text
+            ctx.fillStyle = 'white';
+            ctx.font = `bold ${size * 0.08}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+            ctx.shadowBlur = 10;
+            ctx.shadowOffsetX = 5;
+            ctx.shadowOffsetY = 5;
+            ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+            
+            // Add Yaroz Sweets text
+            ctx.font = `${size * 0.04}px Arial`;
+            ctx.fillText('Yaroz Sweets', canvas.width / 2, canvas.height / 2 + size * 0.12);
+        }
+        
+        // Function to download image
+        function downloadImage(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+            
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Generate all images when the button is clicked
+        document.getElementById('generateAll').addEventListener('click', function() {
+            // Generate cake placeholders
+            generatePlaceholder('cake1', 'Cake 1', colors.cake);
+            generatePlaceholder('cake2', 'Cake 2', colors.cake);
+            generatePlaceholder('cake3', 'Cake 3', colors.cake);
+            generatePlaceholder('cake4', 'Cake 4', colors.cake);
+            
+            // Generate sweet placeholders
+            generatePlaceholder('sweet1', 'Sweet 1', colors.sweet);
+            generatePlaceholder('sweet2', 'Sweet 2', colors.sweet);
+            generatePlaceholder('sweet3', 'Sweet 3', colors.sweet);
+            generatePlaceholder('sweet4', 'Sweet 4', colors.sweet);
+            
+            // Generate catering placeholders
+            generatePlaceholder('catering1', 'Catering 1', colors.catering);
+            generatePlaceholder('catering2', 'Catering 2', colors.catering);
+            generatePlaceholder('catering3', 'Catering 3', colors.catering);
+            generatePlaceholder('catering4', 'Catering 4', colors.catering);
+            
+            // Generate other placeholders
+            generatePlaceholder('kitchen', 'Kitchen', colors.other);
+        });
+    </script>
+</body>
+</html> 
