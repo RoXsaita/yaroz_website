@@ -51,6 +51,7 @@ jobs:
         with:
           name: site-artifact
           path: ./out
+        continue-on-error: true # Ensure the job doesn't fail if uploading fails
 
   # Deployment job
   deploy:
