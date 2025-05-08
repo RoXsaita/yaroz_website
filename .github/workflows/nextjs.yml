@@ -1,93 +1,149 @@
-# Sample workflow for building and deploying a Next.js site to GitHub Pages
-#
-# To get started with Next.js see: https://nextjs.org/docs/getting-started
-#
 name: Deploy Next.js site to Pages
 
 on:
-  # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
-  # Build job
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Detect package manager
-        id: detect-package-manager
-        run: |
-          if [ -f "${{ github.workspace }}/yarn.lock" ]; then
-            echo "manager=yarn" >> $GITHUB_OUTPUT
-            echo "command=install" >> $GITHUB_OUTPUT
-            echo "runner=yarn" >> $GITHUB_OUTPUT
-            exit 0
-          elif [ -f "${{ github.workspace }}/package.json" ]; then
-            echo "manager=npm" >> $GITHUB_OUTPUT
-            echo "command=ci" >> $GITHUB_OUTPUT
-            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
-            exit 0
-          else
-            echo "Unable to determine package manager"
-            exit 1
-          fi
+      
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: ${{ steps.detect-package-manager.outputs.manager }}
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-        with:
-          # Automatically inject basePath in your Next.js configuration file and disable
-          # server side image optimization (https://nextjs.org/docs/api-reference/next/image#unoptimized).
-          #
-          # You may remove this line if you want to manage the configuration yourself.
-          static_site_generator: next
-      - name: Restore cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            .next/cache
-          # Generate a new cache whenever packages or source files change.
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-          # If source files changed but packages didn't, rebuild from a prior cache.
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
-      - name: Install dependencies
-        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
-      - name: Build with Next.js
-        run: ${{ steps.detect-package-manager.outputs.runner }} next build
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+          node-version: 18
+      
+      - name: Force clean install
+        run: |
+          echo "Removing existing package files..."
+          rm -f package-lock.json
+          rm -rf node_modules
+          echo "Installing only essential dependencies..."
+          npm install next react react-dom framer-motion @radix-ui/react-dialog @radix-ui/react-slot
+          npm install --save-dev typescript @types/react @types/node @types/react-dom tailwindcss postcss autoprefixer
+          echo "Generating package lock..."
+          npm install --package-lock-only
+      
+      - name: Build
+        run: |
+          echo "Building Next.js app..."
+          npx next build
+      
+      - name: Run fix-asset-paths
+        run: |
+          echo "Creating fix-asset-paths.js if not existing..."
+          if [ ! -f fix-asset-paths.js ]; then
+            cat > fix-asset-paths.js << 'EOL'
+const fs = require('fs');
+const path = require('path');
+
+// Output directory
+const outDir = './out';
+
+// Process a specific HTML file
+function processHtmlFile(filePath) {
+  try {
+    console.log(`Processing ${filePath}`);
+    
+    let content = fs.readFileSync(filePath, 'utf8');
+    
+    // Fix _next paths (remove leading slash)
+    content = content.replace(/(['"])(\/_next\/)/g, '$1_next/');
+    content = content.replace(/src="\/_next\//g, 'src="_next/');
+    content = content.replace(/href="\/_next\//g, 'href="_next/');
+    
+    // Ensure images paths have consistent format (no leading slash)
+    content = content.replace(/(['"])\/images\//g, '$1images/');
+    
+    // Fix links to videos
+    content = content.replace(/(['"])\/videos\//g, '$1videos/');
+    
+    // Writing back the fixed content
+    fs.writeFileSync(filePath, content, 'utf8');
+    console.log(`Successfully processed ${filePath}`);
+    return true;
+  } catch (error) {
+    console.error(`Error processing ${filePath}:`, error);
+    return false;
+  }
+}
+
+// Main function to process all HTML files in the output directory
+function fixPaths() {
+  try {
+    console.log(`Starting path fixing in ${outDir}`);
+    
+    // Find all HTML files
+    function findHtmlFiles(dir) {
+      let results = [];
+      const files = fs.readdirSync(dir);
+      
+      for (const file of files) {
+        const filePath = path.join(dir, file);
+        const stat = fs.statSync(filePath);
+        
+        if (stat.isDirectory()) {
+          results = results.concat(findHtmlFiles(filePath));
+        } else if (file.endsWith('.html')) {
+          results.push(filePath);
+        }
+      }
+      
+      return results;
+    }
+    
+    const htmlFiles = findHtmlFiles(outDir);
+    console.log(`Found ${htmlFiles.length} HTML files`);
+    
+    let successCount = 0;
+    for (const file of htmlFiles) {
+      if (processHtmlFile(file)) {
+        successCount++;
+      }
+    }
+    
+    console.log(`Path fixing completed! Successfully processed ${successCount} files.`);
+  } catch (error) {
+    console.error('Error fixing paths:', error);
+  }
+}
+
+// Run the function
+fixPaths();
+EOL
+          fi
+          node fix-asset-paths.js
+      
+      - name: Copy CNAME
+        run: |
+          echo "Copying CNAME file..."
+          echo "yarozsweets.com" > ./out/CNAME
+      
+      - name: Upload
+        uses: actions/upload-pages-artifact@v1
         with:
           path: ./out
 
-  # Deployment job
   deploy:
+    needs: build
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
-      - name: Deploy to GitHub Pages
+      - name: Deploy
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v2
