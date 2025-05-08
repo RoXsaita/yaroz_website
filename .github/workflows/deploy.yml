@@ -47,7 +47,7 @@ jobs:
         run: echo "yarozsweets.com" > ./out/CNAME
 
       - name: Upload artifact
-        uses: actions/upload-artifact@main
+        uses: actions/upload-artifact@v3
         with:
           name: site-artifact
           path: ./out
